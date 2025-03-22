@@ -21,6 +21,9 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'direccion',
+        'telefono',
+        'role_id',
     ];
 
     /**
@@ -42,4 +45,33 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
+
+    /**
+     * Obtener el rol del usuario.
+     */
+    public function role()
+    {
+        return $this->belongsTo(Role::class);
+    }
+
+    /**
+     * Verificar si el usuario tiene un rol específico.
+     *
+     * @param string $roleName
+     * @return bool
+     */
+    public function hasRole($roleName)
+    {
+        return $this->role->name === $roleName;
+    }
+
+    /**
+     * Verificar si el usuario es root.
+     *
+     * @return bool
+     */
+    public function isRoot()
+    {
+        return $this->hasRole('root');
+    }
 }

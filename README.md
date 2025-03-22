@@ -1,66 +1,146 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Sistema de Asistente de Instalación - Laravel 10
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+[![Laravel](https://img.shields.io/badge/Laravel-FF2D20?style=for-the-badge&logo=laravel&logoColor=white)](https://laravel.com)
+[![Version](https://img.shields.io/badge/version-1.0.0-blue.svg)](https://semver.org)
 
-## About Laravel
+![PHP](https://img.shields.io/badge/PHP-8.1%2B-777BB4?logo=php&logoColor=white)
+![Composer](https://img.shields.io/badge/Composer-885630?logo=composer&logoColor=white)
+![MySQL](https://img.shields.io/badge/MySQL-5.7%2B-4479A1?logo=mysql&logoColor=white)
+![SQLite](https://img.shields.io/badge/SQLite-3-003B57?logo=sqlite&logoColor=white)
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+Este proyecto implementa un asistente de instalación interactivo para una aplicación Laravel 10, permitiendo configurar fácilmente una nueva instancia con base de datos (MySQL o SQLite), usuario administrador, y configuraciones básicas del sistema.
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Características Principales
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+- **Asistente de Instalación Guiado**: Interfaz paso a paso para la configuración del sistema
+- **Verificación de Requisitos**: Comprobación automática de requisitos del sistema
+- **Configuración Flexible de Base de Datos**: Soporte para MySQL y SQLite
+- **Creación de Usuario Root**: Configuración de administrador con privilegios completos
+- **Migración Automática**: Ejecución de migraciones y seeders tras la configuración
+- **Modo de Entorno**: Configuración adaptable para entornos de producción o desarrollo
+- **API REST Segura**: Implementación de autenticación basada en tokens con Laravel Sanctum
 
-## Learning Laravel
+## Requisitos del Sistema
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+- 🐘 PHP >= 8.1
+- 📦 Composer
+- 🗃️ MySQL 5.7+ o SQLite 3 (según preferencia)
+- 🔌 Extensiones PHP: BCMath, Ctype, Fileinfo, JSON, Mbstring, OpenSSL, PDO, Tokenizer, XML
+- 📂 Permisos de escritura en directorios de storage y bootstrap/cache
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+## Instalación
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+1. Clone el repositorio:
+   ```bash
+   git clone https://github.com/Dansware03/installation_for_laravel_10.git
+   cd installation_for_laravel_10
+   ```
 
-## Laravel Sponsors
+2. Instale las dependencias:
+   ```bash
+   composer install
+   ```
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+3. Cree una copia del archivo de entorno:
+   ```bash
+   cp .env.example .env
+   ```
 
-### Premium Partners
+4. Genere la clave de aplicación:
+   ```bash
+   php artisan key:generate
+   ```
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
+5. Acceda al asistente de instalación:
+   ```bash
+   php artisan serve
+   ```
+   Luego visite: http://localhost:8000/install
 
-## Contributing
+## Flujo de Instalación
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+El asistente de instalación guía al usuario a través de los siguientes pasos:
 
-## Code of Conduct
+1. **Bienvenida**: Introducción al asistente de instalación
+2. **Verificación de Requisitos**: Comprueba que el servidor cumpla con todos los requisitos
+3. **Configuración de Base de Datos**: Elección entre MySQL o SQLite y configuración de conexión
+4. **Creación de Usuario Root**: Establecimiento de credenciales para el administrador principal
+5. **Instalación**: Ejecución de migraciones, seeders y configuraciones finales
+6. **Finalización**: Confirmación de instalación exitosa y credenciales de acceso
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+## Estructura del Proyecto
 
-## Security Vulnerabilities
+```
+app/
+├── Http/
+│   ├── Controllers/
+│   │   └── InstallationController.php   # Controlador principal de instalación
+│   └── Middleware/
+│       └── InstallationMiddleware.php   # Middleware para gestionar estado de instalación
+├── ...
+resources/
+├── views/
+│   └── installation/                    # Vistas del asistente de instalación
+│       ├── layout.blade.php             # Layout principal del asistente
+│       ├── welcome.blade.php            # Página de bienvenida
+│       ├── requirements.blade.php       # Verificación de requisitos
+│       ├── database.blade.php           # Configuración de base de datos
+│       ├── user.blade.php               # Creación de usuario root
+│       └── finish.blade.php             # Confirmación de instalación
+routes/
+├── web.php                              # Rutas web incluyendo rutas de instalación
+├── api.php                              # Rutas de API protegidas por autenticación
+database/
+├── migrations/                          # Migraciones de la base de datos
+└── seeders/                             # Seeders para datos iniciales
+```
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+## API REST
 
-## License
+El sistema incluye una API REST protegida por autenticación basada en tokens usando Laravel Sanctum. Tras la instalación, el usuario root recibe un token de API que puede utilizarse para realizar solicitudes autenticadas.
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+Ejemplo de autenticación:
+
+```bash
+curl -X POST \
+  http://localhost:8000/api/login \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "email": "admin@example.com",
+    "password": "password"
+}'
+```
+
+## Personalización
+
+### Requisitos del Sistema
+
+Para modificar los requisitos verificados durante la instalación, edite el método `checkRequirements()` en `InstallationController.php`.
+
+### Base de Datos
+
+Para agregar soporte para otros motores de base de datos, modifique:
+- La vista `database.blade.php` para incluir opciones adicionales
+- El método `saveDatabase()` en `InstallationController.php`
+
+### Configuración Adicional
+
+Para agregar pasos adicionales al asistente de instalación, cree:
+1. Nueva vista en `resources/views/installation/`
+2. Nuevos métodos en `InstallationController.php`
+3. Nuevas rutas en `routes/web.php`
+
+## Seguridad
+
+- El sistema implementa protección CSRF para todos los formularios
+- La autenticación API utiliza tokens con tiempo de expiración
+- Las contraseñas se almacenan con hash seguro mediante bcrypt
+- El acceso al asistente de instalación se bloquea automáticamente tras completar la instalación
+
+## Licencia
+
+Este proyecto está licenciado bajo [MIT](https://choosealicense.com/licenses/mit/)
+
+## Contribución
+
+Las contribuciones son bienvenidas. Por favor, abra un issue para discutir cambios importantes antes de enviar un pull request.

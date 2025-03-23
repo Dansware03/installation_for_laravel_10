@@ -75,33 +75,125 @@ class InstallationController extends Controller
 
             $databaseType = $request->input('database_type');
 
-            // Modificar archivo .env
-            $envFile = file_get_contents(base_path('.env'));
+            // Ruta del archivo .env
+            $envPath = base_path('.env');
+            $envFile = file_get_contents($envPath);
 
             if ($databaseType === 'mysql') {
-                $envFile = preg_replace('/DB_CONNECTION=.*/', 'DB_CONNECTION=mysql', $envFile);
-                $envFile = preg_replace('/DB_HOST=.*/', 'DB_HOST=' . $request->input('database_host'), $envFile);
-                $envFile = preg_replace('/DB_PORT=.*/', 'DB_PORT=' . $request->input('database_port'), $envFile);
-                $envFile = preg_replace('/DB_DATABASE=.*/', 'DB_DATABASE=' . $request->input('database_name'), $envFile);
-                $envFile = preg_replace('/DB_USERNAME=.*/', 'DB_USERNAME=' . $request->input('database_user'), $envFile);
-                $envFile = preg_replace('/DB_PASSWORD=.*/', 'DB_PASSWORD=' . $request->input('database_password', ''), $envFile);
+                // Para MySQL: Actualizamos o agregamos las variables y las descomentamos
+                $envFile = $this->setEnvValue($envFile, 'DB_CONNECTION', 'mysql');
+                $envFile = $this->setEnvValue($envFile, 'DB_HOST', $request->input('database_host'));
+                $envFile = $this->setEnvValue($envFile, 'DB_PORT', $request->input('database_port'));
+                $envFile = $this->setEnvValue($envFile, 'DB_DATABASE', $request->input('database_name'));
+                $envFile = $this->setEnvValue($envFile, 'DB_USERNAME', $request->input('database_user'));
+                $envFile = $this->setEnvValue($envFile, 'DB_PASSWORD', $request->input('database_password', ''));
             } else {
-                $envFile = preg_replace('/DB_CONNECTION=.*/', 'DB_CONNECTION=sqlite', $envFile);
+                // Para SQLite: Establecemos la conexión y comentamos las variables de MySQL
+                $envFile = $this->setEnvValue($envFile, 'DB_CONNECTION', 'sqlite');
+                $sqlitePath = database_path('database.sqlite');
+                $envFile = $this->commentEnvValue($envFile, 'DB_HOST', '127.0.0.1');
+                $envFile = $this->commentEnvValue($envFile, 'DB_PORT', '3306');
+                $envFile = $this->commentEnvValue($envFile, 'DB_DATABASE', $sqlitePath);
+                $envFile = $this->commentEnvValue($envFile, 'DB_USERNAME', 'root');
+                $envFile = $this->commentEnvValue($envFile, 'DB_PASSWORD', '');
 
-                // Crear archivo de base de datos SQLite si no existe
-                if (!File::exists(database_path('database.sqlite'))) {
-                    File::put(database_path('database.sqlite'), '');
+                // Crear el archivo SQLite si no existe
+                if (!File::exists($sqlitePath)) {
+                    File::put($sqlitePath, '');
                 }
             }
 
-            file_put_contents(base_path('.env'), $envFile);
+            // Escribir los cambios en el archivo .env
+            file_put_contents($envPath, $envFile);
 
-            // Limpiar caché de configuración
+            // Limpiar la caché de configuración
             Artisan::call('config:clear');
+            Artisan::call('cache:clear');
 
             return redirect()->route('installation.user');
         } catch (\Exception $e) {
             return redirect()->back()->with('error', 'Error al guardar la configuración: ' . $e->getMessage());
+        }
+    }
+
+    public function testConnection(Request $request)
+    {
+        // Validamos los parámetros recibidos (puedes ajustar las validaciones según necesites)
+        $request->validate([
+            'database_host' => 'required',
+            'database_port' => 'required',
+            'database_name' => 'required',
+            'database_user' => 'required',
+        ]);
+
+        $host = $request->input('database_host');
+        $port = $request->input('database_port');
+        $database = $request->input('database_name');
+        $username = $request->input('database_user');
+        $password = $request->input('database_password');
+
+        // Creamos la configuración de conexión de forma dinámica
+        $config = [
+            'driver' => 'mysql',
+            'host' => $host,
+            'port' => $port,
+            'database' => $database,
+            'username' => $username,
+            'password' => $password,
+            'charset' => 'utf8mb4',
+            'collation' => 'utf8mb4_unicode_ci',
+            'prefix' => '',
+            'strict' => true,
+            'engine' => null,
+        ];
+
+        try {
+            // Purge (limpiar) cualquier conexión previa y establecer una nueva conexión "testconnection"
+            DB::purge('testconnection');
+            config(['database.connections.testconnection' => $config]);
+            // Intentamos obtener el objeto PDO de la conexión de prueba
+            DB::connection('testconnection')->getPdo();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Conexión exitosa a la base de datos.'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error de conexión: ' . $e->getMessage()
+            ]);
+        }
+    }
+
+    /**
+     * Actualiza o agrega una variable en el contenido de .env y se asegura de descomentarla
+     */
+    private function setEnvValue($envFile, $key, $value)
+    {
+        // Buscamos la variable, ya sea comentada o no
+        $pattern = "/^(#\s*)?{$key}=.*/m";
+        $replacement = "{$key}={$value}";
+        if (preg_match($pattern, $envFile)) {
+            return preg_replace($pattern, $replacement, $envFile);
+        } else {
+            // Si la variable no existe, la agregamos al final
+            return $envFile . "\n" . $replacement;
+        }
+    }
+
+    /**
+     * Comenta o actualiza una variable en el contenido de .env
+     */
+    private function commentEnvValue($envFile, $key, $value)
+    {
+        $pattern = "/^(#\s*)?{$key}=.*/m";
+        $replacement = "#{$key}={$value}";
+        if (preg_match($pattern, $envFile)) {
+            return preg_replace($pattern, $replacement, $envFile);
+        } else {
+            // Si la variable no existe, la agregamos al final
+            return $envFile . "\n" . $replacement;
         }
     }
 
@@ -136,7 +228,6 @@ class InstallationController extends Controller
             'telefono' => 'nullable|string|max:20',
         ]);
 
-        // Ejecutar migraciones
         try {
             Artisan::call('migrate:fresh', ['--force' => true]);
 
@@ -156,7 +247,6 @@ class InstallationController extends Controller
             // Crear token personal para el usuario root
             $token = $user->createToken('api-token', ['*'], now()->addYear());
 
-            // Guardar el token para mostrarlo en la página final
             session(['root_token' => $token->plainTextToken]);
 
         } catch (\Exception $e) {
@@ -165,6 +255,7 @@ class InstallationController extends Controller
 
         return redirect()->route('installation.finish');
     }
+
 
     /**
      * Formulario para configurar URL y entorno

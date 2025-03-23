@@ -391,7 +391,7 @@
 
         <div class="install-footer">
             <div class="developer-info">
-                <a href="https://instagram.com/dansware" target="_blank">Desarrollado por Dansware Developer</a>
+                <a href="https://instagram.com/dansware03" target="_blank">Desarrollado por Dansware Developer</a>
                 <span class="version-info">Laravel v{{ Illuminate\Foundation\Application::VERSION }}</span>
             </div>
             @yield('footer')

@@ -19,7 +19,7 @@ class CheckRole
         if (!Auth::check() || !Auth::user()->hasRole($role)) {
             return response()->json(['message' => 'No tienes permisos para acceder a este recurso'], 403);
         }
-        
+
         return $next($request);
     }
 }

@@ -3,7 +3,7 @@
 @section('content')
     <div class="text-center mb-4">
         <h3 class="welcome-heading">Bienvenido al Asistente de Instalación</h3>
-        <p class="lead">Este asistente te guiará a través del proceso de configuración de tu aplicación Laravel 10 API REST.
+        <p class="lead">Este asistente te guiará a través del proceso de configuración de tu aplicación Laravel 12 React API REST.
         </p>
     </div>
 

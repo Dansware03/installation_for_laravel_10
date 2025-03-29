@@ -20,12 +20,12 @@ class InstallationMiddleware
         if (File::exists(storage_path('.installed')) && $request->is('install*')) {
             return redirect('/');
         }
-        
+
         // Si no está instalado y trata de acceder a rutas que no son de instalación
         if (!File::exists(storage_path('.installed')) && !$request->is('install*')) {
             return redirect()->route('installation.welcome');
         }
-        
+
         return $next($request);
     }
 }
